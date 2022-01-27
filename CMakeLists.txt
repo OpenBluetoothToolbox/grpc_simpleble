@@ -30,7 +30,17 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(grpc)
 
+set(INTERFACE_BUILD_DIR )
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/interface)
+add_custom_target(
+    interface
+    COMMAND $<TARGET_FILE:protoc> -I proto --grpc_out ${CMAKE_BINARY_DIR}/interface --plugin=protoc-gen-grpc=$<TARGET_FILE:grpc_cpp_plugin> proto/simplegrpcble.proto
+    COMMAND $<TARGET_FILE:protoc> -I proto --cpp_out ${CMAKE_BINARY_DIR}/interface proto/simplegrpcble.proto
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 add_executable(simplegrpcble server/main.cpp)
+add_dependencies(simplegrpcble interface)
 
 target_include_directories(simplegrpcble PRIVATE ${SIMPLEBLE_INCLUDES})
 target_link_libraries(simplegrpcble PRIVATE simpleble-static libprotobuf grpc++_reflection grpc++)

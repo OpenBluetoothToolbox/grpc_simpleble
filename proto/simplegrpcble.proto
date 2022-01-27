@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package simplegrpcble;
+
+// Interface exported by the server.
+service SimpleGRPCBLE {
+  rpc GetAdapters(Empty) returns (AdapterList) {}
+}
+
+message Empty {}
+
+message Adapter {
+  string identifier = 1;
+  string address = 2;
+}
+
+message AdapterList { repeated Adapter adapters = 1; }
