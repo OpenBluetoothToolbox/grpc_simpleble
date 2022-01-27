@@ -1,0 +1,36 @@
+
+# Basic CMake configuration
+cmake_minimum_required(VERSION 3.16.0)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+project(grpc_simpleble)
+
+# Nice hack to automatically ignore the build directory
+file(WRITE ${CMAKE_BINARY_DIR}/.gitignore "*")
+
+# Include all necessary CMake modules
+include(FetchContent)
+
+set(SIMPLEBLE_GIT_REPOSITORY "https://github.com/OpenBluetoothToolbox/SimpleBLE.git")
+set(SIMPLEBLE_GIT_TAG "v0.1.0")
+set(GRPC_GIT_REPOSITORY "https://github.com/grpc/grpc.git")
+set(GRPC_GIT_TAG "v1.43.2")
+
+FetchContent_Declare(
+    simpleble
+    GIT_REPOSITORY ${SIMPLEBLE_GIT_REPOSITORY}
+    GIT_TAG ${SIMPLEBLE_GIT_TAG}
+)
+FetchContent_MakeAvailable(simpleble)
+
+FetchContent_Declare(
+    grpc
+    GIT_REPOSITORY ${GRPC_GIT_REPOSITORY}
+    GIT_TAG ${GRPC_GIT_TAG}
+)
+FetchContent_MakeAvailable(grpc)
+
+add_executable(simplegrpcble server/main.cpp)
+
+target_include_directories(simplegrpcble PRIVATE ${SIMPLEBLE_INCLUDES})
+target_link_libraries(simplegrpcble PRIVATE simpleble-static libprotobuf grpc++_reflection grpc++)
