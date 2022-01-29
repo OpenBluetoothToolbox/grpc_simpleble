@@ -6,8 +6,17 @@
 #include <grpcpp/server_context.h>
 #include "simplegrpcble.grpc.pb.h"
 
+#include <iostream>
+
 class SimpleGRPCBleImpl final : public simplegrpcble::SimpleGRPCBLE::Service {
   public:
+    explicit SimpleGRPCBleImpl() {}
+
+    grpc::Status GetAdapters(grpc::ServerContext* context, simplegrpcble::Empty const*,
+                             simplegrpcble::AdapterList* response) override {
+        std::cout << "GetAdapters" << std::endl;
+        return grpc::Status::OK;
+    }
 };
 
 void RunServer() {
