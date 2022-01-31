@@ -5,13 +5,43 @@ package simplegrpcble;
 // Interface exported by the server.
 service SimpleGRPCBLE {
   rpc GetAdapters(Empty) returns (AdapterList) {}
+
+  rpc AdapterScanStart(AdapterId) returns (Empty) {}
+  rpc AdapterScanStop(AdapterId) returns (Empty) {}
+  rpc AdapterScanIsActive(AdapterId) returns (Bool) {}
+  rpc AdapterScanGetResults(AdapterId) returns (DeviceList) {}
 }
 
 message Empty {}
 
+message Bool {
+  bool value = 1;
+}
+
+message AdapterId {
+  sint32 id = 1;
+}
+
 message Adapter {
-  string identifier = 1;
-  string address = 2;
+  sint32 id = 1; // Note: Must be the same as AdapterId.id
+  string identifier = 2;
+  string address = 3;
+}
+
+message DeviceId {
+  sint32 adapter_id = 1; // Note: Must be the same as AdapterId.id
+  sint32 id = 2;
+}
+
+message Device {
+  sint32 adapter_id = 1; // Note: Must be the same as AdapterId.id
+  sint32 id = 2; // Note: Must be the same as DeviceId.id
+  string identifier = 3;
+  string address = 4;
+  bool is_connectable = 5;
+  map<sint32, bytes> manufacturer_data = 6;
 }
 
 message AdapterList { repeated Adapter adapters = 1; }
+
+message DeviceList { repeated Device devices = 1; }
